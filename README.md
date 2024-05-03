@@ -4,13 +4,13 @@
 
 ### Per crear l'entorn de Flask, primer hi ha que seguir les següents passes: 
 
- **Windows **                      
+ ** Windows **                      
  - .prova/Scripts/activate     
  - Per desactivar: desactivate  
 
-**Linux**
-  -Per activar: source .prova/Scripts/activate
-  -Per desactivar: desactivate
+** Linux **
+  - Per activar: source .prova/Scripts/activate
+  - Per desactivar: desactivate
 
 ### Instal.lar pip (python package Index)
 
