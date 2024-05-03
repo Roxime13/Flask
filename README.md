@@ -8,6 +8,7 @@
  - Per desactivar: desactivate  -Per desactivar: desactivate
 
 2. Instal.lar pip (python package Index)
+
 2.1. 
 
 Això és un [enllaç](https://google.com) i això són **negretes** i *cursiva* i ara ve una llista:
