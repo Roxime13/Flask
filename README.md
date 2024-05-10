@@ -1,8 +1,19 @@
-# Exemple de README
+# Index
+1. ## Instal.lació Flask i entorn
+2. ### Creació entorn
+3. ### Qué es Pip?
+
 
 ## Instal.lació Flask i entorn
 
-### Per crear l'entorn de Flask, primer hi ha que seguir les següents passes: 
+### Creació entorn
+### ¿Qué és Flask?
+### Jinja
+### Resum instal.lació
+## Git (Preparació entorn repositori i comandes importants)
+## RSS
+## FeedParser i Modes
+## Enllaços d'Interés
 
 ** Windows **
 - .prova/Scripts/activate
