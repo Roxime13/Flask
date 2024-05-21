@@ -1,94 +1,83 @@
 from flask import Flask, request, render_template, redirect, url_for, flash
-from flask import request
 import feedparser
 
 app = Flask(__name__)
 app.secret_key = '¡3248 97320983 bkjxdlrkfj k2 r9p874989387 98p78oiyylkhçç'
 
-#
-# Exemples inicials de flask
-#
-@app.route("/demo0")
-def demo0():
-    return "<h1>Hola em dic Alfonso</h1>"
+def obtener_noticias(diario_nombre):
+    diccionarionoticias = {
+        "lavanguardia": {
+            "Deportes": "https://www.lavanguardia.com/rss/deportes.xml",
+            "Política": "https://www.lavanguardia.com/rss/politica.xml",
+            "Vida": "https://www.lavanguardia.com/rss/vida.xml", 
+            "Series": "https://www.lavanguardia.com/rss/series.xml",
+            "Cultura": "https://www.lavanguardia.com/rss/cultura.xml"
+        },
+        "elpuntavui": {
+            "Deportes": "https://www.elpuntavui.cat/rss/deportes.xml",
+            "Política": "https://www.elpuntavui.cat/rss/politica.xml",
+            "Vida": "https://www.elpuntavui.cat/rss/vida.xml",
+            "Cultura": "https://www.elpuntavui.cat/rss/cultura.xml"
+        }
+    }
 
-@app.route("/demo1")
-def demo1():
-    return render_template("exemples/demo/hola.html")
+    noticias = []
 
-@app.route("/demo2")
-def demo2():
-    return render_template("exemples/demo/edat.html", nom="Alfonso", edat=26)
+    if diario_nombre in diccionarionoticias:
+        diario_diccionarionoticias= diccionarionoticias[diario_nombre]
+        for categoria, rss in diario_diccionarionoticias.items():
+            feed = feedparser.parse(rss)
+            for entry in feed.entries[:4]:
+                noticia = {
+                    "title": entry.get("title", ""),
+                    "image": "", 
+                }
+                if "media_content" in entry:
+                    noticia["image"] = entry.media_content[0]["url"]
+                elif "media_thumbnail" in entry:
+                    noticia["image"] = entry.media_thumbnail[0]["url"]
+                noticias.append(noticia)
 
-@app.route("/demo3/<nom_usuari>/<int:edat>")
-def demo3(nom_usuari, edat):
-    return render_template("exemples/demo/edat.html", nom = nom_usuari, edat = edat)
+    return noticias
 
-@app.route("/demo4")
-def demo4():
-    nom = request.args.get('nom', default = "Desconegut/a", type = str)
-    edat = request.args.get('edat', default = 0, type = int)
-    return render_template("exemples/demo/edat.html", nom = nom, edat = edat)
+@app.route("/")
+def menu_diarios():
+    diarios = ['lavanguardia', 'elpuntavui'] 
+    return render_template("menu.html", diaries=diarios)
 
-@app.route("/demo5")
-def demo5():
-    # pàgina mostrant un exemple amb bootstrap
-    return render_template("exemples/demo/boostrap.html")
+@app.route("/<diario_nombre>")
+def mostrar_noticias(diario_nombre):
+    noticias = obtener_noticias(diario_nombre)
+    return render_template("index.html", diario_nombre=diario_nombre, noticias=noticias)
 
-#
-# Petit exemple amb flask [SEGUIMENT]
-#
-@app.route("/hola1")
-def hola1():
-    return render_template("exemples/hola/salutacio_form.html")
-
-@app.route("/hola2")
-def hola2():
-    valor_salutacio = request.args.get('salutacio', default = "WTF!", type = str)
-    valor_quantes = request.args.get('quantes', default = 1, type = int)
-    valor_color_de_fons = request.args.get('color-de-fons', default = "white", type = str)
-    valor_gatete = request.args.get('gatete', default = False, type = bool)
-    return render_template("exemples/hola/salutacio_resultat.html", 
-                           salutacio = valor_salutacio, 
-                           quantes = valor_quantes,
-                           color_de_fons = valor_color_de_fons,
-                           gatete = valor_gatete
-                           )
-
-#
-# Exemple de formulari amb post
-#
-@app.route("/insert", methods=['GET', 'POST'])
-def insert():
-    if request.method == 'GET':
-        return render_template("exemples/insert/insert_form.html")
-    else:
-        # POST
-        producte = request.form.get('producte', type = str)
-        quantitat = request.form.get('quantitat', type = int)
-
-        # Aquí hauríem de fer alguna cosa amb producte i quantitat
-        # com per exemple un insert a la base de dades
-
-        # https://www.seobility.net/es/wiki/Post/Redirect/Get
-        flash(f"El producte {producte} amb quantitat {quantitat} s'ha inserit correctament")
-        return redirect(url_for('insert'))
-
-@app.route('/')
-def index():
-    return render_template("index.html")
-
-@app.route('/lavanguardia/<seccio>')
-def lavanguardia(seccio):
-    rss = get_rss_lavanguardia(seccio)
-    return render_template("lavanguardia.html", rss = rss)
-
-def get_rss_lavanguardia(seccio):
-    # MODE REMOT: versió on descarrega l'XML de la web
-    xml = f"https://www.lavanguardia.com/rss/{seccio}.xml" #una manera de conectar el xml
+@app.route('/<diario>/<seccion>')
+def mostrar_noticias_por_seccion(diario, seccion):
+    rss = None
+    if diario == "lavanguardia":
+        rss = get_rss_lavanguardia(seccion)
+        if rss:
+            return render_template("lavanguardia.html", diario_nombre="La Vanguardia", seccion_nombre=seccion, rss=rss)
+    elif diario == "elpuntavui":
+        rss = get_rss_elpuntavui(seccion)
+        if rss:
+            return render_template("elpuntavui.html", diario_nombre="El Punt Avui", seccion_nombre=seccion, rss=rss)
     
-    # MODE LOCAL: versió que fa servir l'XML descarregat 
-    # xml = f"./rss/lavanguardia/{seccio}.xml"
-    
+    return "Feed RSS no encontrado"
+
+def get_rss_lavanguardia(seccion):
+    xml = f"https://www.lavanguardia.com/rss/{seccion}.xml"
+    # xml = f"./rss/lavanguardia/{seccion}.xml"
     rss = feedparser.parse(xml)
     return rss
+ 
+
+def get_rss_elpuntavui(seccion):
+    xml = f"http://www.elpuntavui.cat/{seccion}.feed?type=rss"
+    # xml = f"./rss/elpuntavui/{seccion}.xml"
+    
+    rss = feedparser.parse(xml)
+    
+    return rss
+
+if __name__ == "__main__":
+    app.run(debug=True)

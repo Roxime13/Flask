@@ -3,18 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/css/styles.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" >
+
     <title>Diaris!</title>
+    
 </head>
-<body>
-    <p>Mira les noticies de La Vanguardia:</p>
-    <ul>
-        <li><a href="/lavanguardia/deportes">Deportes</a></li>
-        <li><a href="/lavanguardia/politica">Política</a></li>
-        <li><a href="/lavanguardia/vida">Vida</a></li>
-        <li><a href="/lavanguardia/cultura">Cultura</a></li>
-        <li><a href="/lavanguardia/series">Series</a></li>
-    </ul>
-    <img src="/static/img/diaris.jpg" alt="Diaris" />
+<body class="{% if dark_mode %}dark-mode{% else %}light-mode{% endif %}">
+
+    <div class="container-md mt-5">
+        <nav class="navbar navbar-expand-lg {% if dark_mode %}navbar-dark bg-dark{% else %}navbar-light bg-light{% endif %} shadow-sm mb-4 rounded" >
+
+
+            <div class="container">
+                <a class="navbar-brand" href="/">{{ diario_nombre.capitalize() }}</a> 
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mx-auto fs-5">
+                        <li class="nav-item">
+                            <a class="nav-link text-danger" href="/{{ diario_nombre }}/deportes"><i class="fas fa-baseball-ball"></i> Deportes</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-info" href="/{{ diario_nombre }}/politica"><i class="fas fa-landmark"></i> Política</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-lime" href="/{{ diario_nombre }}/vida"><i class="fas fa-heartbeat"></i> Vida</a>
+                        </li>
+                        {% if diario_nombre == "lavanguardia" %}
+                        <li class="nav-item">
+                            <a class="nav-link text-pink" href="/{{ diario_nombre }}/cultura"><i class="fas fa-theater-masks"></i> Cultura</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-purple" href="/{{ diario_nombre }}/series"><i class="fas fa-tv"></i> Series</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        
+    
+        <div class="container mt-4">
+            <div class="row justify-content-end">
+                <div class="col-auto display-3 ">
+                    <button id="cambiarmodo" class="btn btn-purple">
+                        <i class="fas fa-sun sun"></i>
+                        <i class="fas fa-moon moon" style="display: none;"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        {% if diario_nombre == "lavanguardia" %}
+            <div id="carouselejemplo" class="carousel slide" data-bs-ride="carousel">
+                <h1 class="text-center text-decoration-underline">Últimas noticias</h1>
+                <div class="carousel-inner">
+                    {% for item in noticias %}
+                        <div class="carousel-item {% if loop.first %} active {% endif %}" style="position: relative;">
+                            <div class="d-block mx-auto" style="max-width: 800px; max-height: 600px; border: 2px solid white; border-radius: 8px; overflow: hidden;">
+                                <img src="{{ item.image }}" class="w-100" alt="{{ item.title }}" onmouseover="zoomSi(this)" onmouseout="zoomNo(this)">
+                                <div class="carousel-caption d-block" style="position: absolute; bottom: 0; left: 0; right: 0; background-color: rgba(0, 0, 0, 0.7); border-radius: 0; padding: 0.5rem;">
+                                    <h5 class="text-white" style="width: 100%; font-size: 1rem;">{{ item.title }}</h5> 
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+    {% endif %}
+    </div>  
+    <!--No hay imagenes para elpuntavui-->
+          
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="/static/js/script.js" defer></script> 
 </body>
 </html>
+
+
+
